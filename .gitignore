@@ -1,44 +1,123 @@
-# Python
+# =============================================================================
+# .gitignore — Python/Flask Gitignore Patterns
+# =============================================================================
+# Standard gitignore for the Reverse Document Generator Flask application.
+# Excludes build artifacts, caches, virtual environments, secrets, and IDE
+# files from version control.
+#
+# IMPORTANT: .env.example and .flaskenv ARE committed (non-secret templates).
+#            .env is NOT committed (contains API keys and credentials).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Python Bytecode and Compilation
+# -----------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# -----------------------------------------------------------------------------
+# Distribution and Packaging
+# -----------------------------------------------------------------------------
 *.egg-info/
 *.egg
 dist/
 build/
 .eggs/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+.Python
+develop-eggs/
+downloads/
+eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+MANIFEST
 
-# Virtual Environment
+# -----------------------------------------------------------------------------
+# Virtual Environments
+# -----------------------------------------------------------------------------
 .venv/
 venv/
 env/
 ENV/
+env.bak/
+venv.bak/
 
-# Flask
+# -----------------------------------------------------------------------------
+# Flask / Web Application
+# -----------------------------------------------------------------------------
 instance/
 .webassets-cache
 
-# Environment and Secrets
+# -----------------------------------------------------------------------------
+# Environment Variables and Secrets
+# CRITICAL: .env contains API keys, database credentials, and other secrets
+#           that must NEVER be committed to version control.
+#
+# .env.example — Committed (template without real secrets)
+# .flaskenv    — Committed (non-secret Flask CLI variables)
+# -----------------------------------------------------------------------------
 .env
 .env.local
+.env.*.local
 *.pem
 *.key
 
-# IDE and Editor
+# -----------------------------------------------------------------------------
+# IDE and Editor Files
+# -----------------------------------------------------------------------------
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
 .DS_Store
+Thumbs.db
 
+# -----------------------------------------------------------------------------
 # Testing and Coverage
+# -----------------------------------------------------------------------------
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 .tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+nosetests.xml
 
-# Misc
-*.log
+# -----------------------------------------------------------------------------
+# Type Checking and Linting Caches
+# -----------------------------------------------------------------------------
 .mypy_cache/
 .ruff_cache/
+.dmypy.json
+dmypy.json
+
+# -----------------------------------------------------------------------------
+# Logs
+# -----------------------------------------------------------------------------
+*.log
+
+# -----------------------------------------------------------------------------
+# Docker (local overrides only; Dockerfile and docker-compose.yml are committed)
+# -----------------------------------------------------------------------------
+docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# Node.js (for MCP/Figma integration runtime)
+# -----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
