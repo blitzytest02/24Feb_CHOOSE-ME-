@@ -1,0 +1,67 @@
+# Pre-commit hook configuration for code quality enforcement
+# Flask-based Reverse Document Generator project
+# Hooks: Black formatter, isort import sorting, Ruff linter,
+#         YAML/TOML validation, debug statement detection, and safety checks
+
+default_language_version:
+  python: python3.12
+
+repos:
+  # -------------------------------------------------------------------
+  # General file quality hooks (pre-commit built-in)
+  # -------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # Validate YAML file syntax
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+
+      # Ensure files end with a single newline
+      - id: end-of-file-fixer
+
+      # Remove trailing whitespace from lines
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Detect accidentally committed debug statements (pdb, ipdb, etc.)
+      - id: debug-statements
+
+      # Prevent committing large files (default 500kB threshold)
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+
+      # Detect merge conflict markers left in files
+      - id: check-merge-conflict
+
+      # Validate TOML file syntax (pyproject.toml)
+      - id: check-toml
+
+  # -------------------------------------------------------------------
+  # Black — Python code formatter
+  # -------------------------------------------------------------------
+  - repo: https://github.com/psf/black
+    rev: "26.1.0"
+    hooks:
+      - id: black
+        args: [--line-length=120]
+        language_version: python3.12
+
+  # -------------------------------------------------------------------
+  # isort — Python import sorter (Black-compatible profile)
+  # -------------------------------------------------------------------
+  - repo: https://github.com/pycqa/isort
+    rev: "7.0.0"
+    hooks:
+      - id: isort
+        args: [--profile=black, --line-length=120]
+
+  # -------------------------------------------------------------------
+  # Ruff — Fast Python linter (replaces flake8, pylint)
+  # -------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.2
+    hooks:
+      # Run the Ruff linter with auto-fix enabled
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
