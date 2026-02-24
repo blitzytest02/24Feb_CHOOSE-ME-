@@ -1,0 +1,87 @@
+# Private Registry for internal Blitzy packages (must be first)
+--extra-index-url https://us-east1-python.pkg.dev/blitzy-platform-stage/python-us-east1/simple/
+
+# =============================================================================
+# Core Flask Framework
+# =============================================================================
+Flask==3.1.3                        # WSGI web application framework
+gunicorn==23.0.0                    # Production WSGI HTTP server
+python-dotenv==1.1.0                # Environment variable loading from .env files
+Werkzeug==3.1.3                     # WSGI utility library (Flask dependency)
+Jinja2==3.1.6                       # Template engine (Flask dependency)
+
+# =============================================================================
+# Agent Orchestration
+# =============================================================================
+langgraph==1.0.9                    # Stateful multi-agent workflow orchestration via StateGraph
+langchain-core==1.2.14              # Foundation LLM abstraction layer
+langgraph-checkpoint==4.0.0         # Checkpoint management for workflow state persistence
+langgraph-prebuilt==1.0.8           # Prebuilt LangGraph agent components
+langgraph-sdk==0.3.8                # LangGraph client SDK
+
+# =============================================================================
+# LLM Provider Integrations
+# =============================================================================
+langchain-anthropic==1.3.3          # Anthropic Claude Opus 4.6 integration
+anthropic==0.83.0                   # Anthropic Python SDK
+langchain-openai==1.1.10            # OpenAI GPT-5 Mini integration
+openai==2.21.0                      # OpenAI Python SDK
+langchain-voyageai==0.3.2           # Voyage AI embedding integration
+voyageai==0.3.7                     # Voyage AI Python SDK
+
+# =============================================================================
+# Data Validation and Modeling
+# =============================================================================
+pydantic==2.12.5                    # Structured agent output validation, API request/response schemas
+pydantic-settings==2.13.1           # Environment-based settings management for Flask config
+
+# =============================================================================
+# Google Cloud Platform
+# =============================================================================
+google-cloud-storage==3.9.0         # GCS document persistence and retrieval
+google-cloud-pubsub==2.35.0         # Pub/Sub event notifications
+
+# =============================================================================
+# Graph Database
+# =============================================================================
+neo4j==6.1.0                        # Neo4j Bolt driver for code graph queries
+neo4j-graphrag==1.13.0              # Neo4j GraphRAG extension
+langchain-neo4j==0.8.0              # LangChain Neo4j integration
+
+# =============================================================================
+# NLP and Token Management
+# =============================================================================
+transformers==5.2.0                 # GPT-2 tokenizer for token counting operations
+
+# =============================================================================
+# MCP and Design Integration
+# =============================================================================
+mcp==1.26.0                         # MCP SDK for optional Figma integration
+langchain-mcp-adapters==0.2.1       # Bridges MCP tools with LangChain agent tool-calling
+
+# =============================================================================
+# Resilience and Utilities
+# =============================================================================
+tenacity==9.1.4                     # Retry logic foundation for exponential backoff
+thefuzz==0.22.1                     # Fuzzy string matching for heading resolution in UPDATE mode
+requests==2.32.5                    # Synchronous HTTP library for platform service calls
+httpx==0.28.1                       # Modern async HTTP client
+
+# =============================================================================
+# Observability
+# =============================================================================
+langsmith==0.7.6                    # LLM execution tracing and monitoring
+structlog==25.5.0                   # Structured JSON logging
+
+# =============================================================================
+# Internal Private Packages (resolved from Google Artifact Registry above)
+# =============================================================================
+blitzy-platform-shared==0.0.616     # CodeGraphBuilder, AdminStorageService, TECHNICAL_SECTION_PROMPTS, LLM configs, tools
+blitzy-utils==0.0.516               # publish_notification, logger, SCM operations, ServiceClient, Figma utilities
+
+# =============================================================================
+# Testing
+# =============================================================================
+pytest==8.3.5                       # Test framework
+pytest-cov==6.1.1                   # Test coverage reporting
+pytest-flask==1.3.0                 # Flask testing utilities and fixtures

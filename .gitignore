@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Flask
+instance/
+.webassets-cache
+
+# Environment and Secrets
+.env
+.env.local
+*.pem
+*.key
+
+# IDE and Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Misc
+*.log
+.mypy_cache/
+.ruff_cache/
