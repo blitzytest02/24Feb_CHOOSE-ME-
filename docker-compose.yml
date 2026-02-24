@@ -1,0 +1,112 @@
+# =============================================================================
+# Docker Compose — Local Development Multi-Service Composition
+# =============================================================================
+#
+# Defines the local development environment for the Flask Reverse Document
+# Generator application. Provides a convenient way to build, run, and develop
+# the Flask application inside a containerized environment with all necessary
+# configuration.
+#
+# Usage:
+#   Start services:    docker compose up
+#   Start (detached):  docker compose up -d
+#   Rebuild & start:   docker compose up --build
+#   Stop services:     docker compose down
+#   View logs:         docker compose logs -f web
+#
+# Prerequisites:
+#   1. Docker Engine 20.10+ and Docker Compose V2 (docker compose)
+#   2. A `.env` file at the repository root with all required environment
+#      variables. Copy from `.env.example` and fill in actual values:
+#
+#        cp .env.example .env
+#
+# NOTE: The `.env` file is gitignored and must NEVER be committed — it
+# contains sensitive credentials (API keys, database passwords).
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Services
+# ---------------------------------------------------------------------------
+
+services:
+  # -------------------------------------------------------------------------
+  # web — Flask Reverse Document Generator Application
+  # -------------------------------------------------------------------------
+  # The primary application service. Builds from the local Dockerfile
+  # (Ubuntu 24.04, Python 3.12, Node.js 20, Chrome) and serves the Flask
+  # application via Gunicorn with live-reload enabled for development.
+  #
+  # The Gunicorn --reload flag watches for file changes in the mounted
+  # volume and automatically restarts workers, providing a rapid
+  # development feedback loop without manual container rebuilds.
+  # -------------------------------------------------------------------------
+  web:
+    # Build the container image from the local Dockerfile at the repo root.
+    # The Dockerfile installs all system dependencies (Python 3.12, Node.js 20,
+    # Chrome/Chromium), Python packages from requirements.txt (including
+    # private Artifact Registry packages), and configures a non-root user.
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Override the Dockerfile CMD to enable live-reload during development.
+    # In production, the Dockerfile CMD runs Gunicorn without --reload.
+    # The --reload flag watches the /app directory for Python file changes
+    # and gracefully restarts workers when modifications are detected.
+    command: gunicorn --config gunicorn.conf.py wsgi:app --reload
+
+    # Map container port 8080 to host port 8080. This matches the Gunicorn
+    # bind configuration in gunicorn.conf.py (bind = "0.0.0.0:8080") and
+    # the Cloud Run default port.
+    ports:
+      - "8080:8080"
+
+    # Mount the local project directory into the container's /app directory.
+    # This enables live code editing on the host to be immediately reflected
+    # inside the container (combined with Gunicorn's --reload flag).
+    # The /app path matches the WORKDIR defined in the Dockerfile.
+    volumes:
+      - .:/app
+
+    # Load all environment variables from the .env file. This file must
+    # contain all 20+ variables across 6 categories:
+    #   - Flask config:      FLASK_APP, FLASK_ENV, FLASK_SECRET_KEY, FLASK_CONFIG
+    #   - LLM API keys:      ANTHROPIC_API_KEY, OPENAI_API_KEY, VOYAGE_API_KEY
+    #   - Platform services:  ADMIN_SERVICE_URL, SECRET_MANAGER_URL, MARKDOWN_SERVICE_URL
+    #   - Graph database:     NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_DATABASE
+    #   - Observability:      LANGCHAIN_TRACING_V2, LANGCHAIN_API_KEY, LANGSMITH_PROJECT
+    #   - Pub/Sub:            PUBSUB_PROJECT_ID, PUBSUB_TOPIC
+    #   - Storage:            GCS_BUCKET_NAME, GCS_PROJECT_ID
+    #   - Application:        LOG_LEVEL, ENVIRONMENT, SERVICE_NAME
+    #
+    # See .env.example for the full template with descriptions.
+    env_file:
+      - .env
+
+    # Inline environment variable overrides for development defaults.
+    # These take precedence over values in .env, ensuring the development
+    # configuration is always active when using docker compose.
+    environment:
+      - FLASK_APP=wsgi.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+
+    # Restart policy: automatically restart the container unless it was
+    # explicitly stopped by the developer (docker compose stop / down).
+    # Handles transient failures (e.g., startup errors during dependency
+    # initialization) by automatically retrying.
+    restart: unless-stopped
+
+    # Container name for easy identification in docker ps and log output.
+    container_name: reverse-document-generator
+
+    # Health check verifying the Flask application is responding to HTTP
+    # requests on the /health endpoint. This mirrors the HEALTHCHECK
+    # defined in the Dockerfile but can be overridden here for development.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
